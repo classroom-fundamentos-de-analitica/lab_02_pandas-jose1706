@@ -22,7 +22,7 @@ def pregunta_01():
     40
 
     """
-    return
+    return len(tbl0)
 
 
 def pregunta_02():
@@ -33,9 +33,9 @@ def pregunta_02():
     4
 
     """
-    return
+    return tbl0.shape[1]
 
-
+print(pregunta_02())
 def pregunta_03():
     """
     ¿Cuál es la cantidad de registros por cada letra de la columna _c1 del archivo
@@ -50,9 +50,9 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
+    return tbl0._c1.head()
 
-
+print(pregunta_03())
 def pregunta_04():
     """
     Calcule el promedio de _c2 por cada letra de la _c1 del archivo `tbl0.tsv`.
