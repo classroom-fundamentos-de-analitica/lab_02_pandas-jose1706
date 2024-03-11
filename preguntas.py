@@ -171,8 +171,9 @@ def pregunta_10():
     """
     co10 = tbl0.copy()
     result = co10.groupby('_c1')['_c2'].apply(lambda x: ':'.join(map(str, sorted(x)))).reset_index()
+    result = result.rename(columns={'_c1':'_c0', '_c2':'_c1'})
     return result
-
+print(pregunta_10())
 
 def pregunta_11():
     """
