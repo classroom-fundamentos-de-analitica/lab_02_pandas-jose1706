@@ -35,7 +35,7 @@ def pregunta_02():
     """
     return tbl0.shape[1]
 
-print(pregunta_02())
+
 def pregunta_03():
     """
     ¿Cuál es la cantidad de registros por cada letra de la columna _c1 del archivo
@@ -50,9 +50,10 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return tbl0._c1.head()
+    #return tbl0._c1.value_counts().sort_index()
+    return tbl0.groupby("_c1")["_c1"].count()
 
-print(pregunta_03())
+
 def pregunta_04():
     """
     Calcule el promedio de _c2 por cada letra de la _c1 del archivo `tbl0.tsv`.
@@ -65,7 +66,7 @@ def pregunta_04():
     E    4.785714
     Name: _c2, dtype: float64
     """
-    return
+    return tbl0.groupby("_c1")["_c2"].mean()
 
 
 def pregunta_05():
@@ -82,8 +83,7 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
-
+    return tbl0.groupby("_c1")["_c2"].max()
 
 def pregunta_06():
     """
@@ -94,7 +94,9 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
+    co6 = tbl1.copy()
+    co6["_c4"] = co6["_c4"].str.upper()
+    return sorted(co6["_c4"].unique())
 
 
 def pregunta_07():
@@ -110,7 +112,7 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
+    return tbl0.groupby("_c1")["_c2"].sum()
 
 
 def pregunta_08():
@@ -128,7 +130,9 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
+    co8 = tbl0.copy()
+    co8 = co8.assign(suma = lambda x: x["_c0"] + x["_c2"])
+    return co8
 
 
 def pregunta_09():
@@ -146,7 +150,9 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+    co9 = tbl0.copy()
+    co9["year"] = [x.split("-")[0] for x in co9["_c3"]]
+    return co9
 
 
 def pregunta_10():
@@ -163,7 +169,9 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
+    co10 = tbl0.copy()
+    result = co10.groupby('_c1')['_c2'].apply(lambda x: ':'.join(map(str, sorted(x)))).reset_index()
+    return result
 
 
 def pregunta_11():
@@ -182,10 +190,12 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
+    co11 = tbl1.copy()
+    result = co11.groupby('_c0')['_c4'].apply(lambda x: ','.join(map(str, sorted(x)))).reset_index()
+    return result
 
 
-def pregunta_12():
+def pregunta_12(): #revisar bien este codigo
     """
     Construya una tabla que contenga _c0 y una lista separada por ',' de los valores de
     la columna _c5a y _c5b (unidos por ':') de la tabla `tbl2.tsv`.
@@ -200,7 +210,12 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
+    co12 = tbl2.copy()
+    def format_and_sort(group):
+        sorted_group = group.sort_values(by='_c5a')
+        return ','.join(sorted_group['_c5a'] + ':' + sorted_group['_c5b'].astype(str))
+    result = co12.groupby('_c0').apply(format_and_sort).reset_index(name='_c5')
+    return result
 
 
 def pregunta_13():
@@ -217,4 +232,8 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    tab13 = pd.merge(tbl0, tbl2, on='_c0')
+    t = tab13.groupby('_c1')['_c5b'].sum()
+    return t
+
+
